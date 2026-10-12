@@ -13,6 +13,8 @@ from src.metrics import (daily_pickups, filter_demand, headline_metrics,
 from src.visualizations import (daily_trend_chart, demand_map, hourly_chart_html,
                                 weekday_average_chart)
 
+PLAYBACK_INTERVAL_SECONDS = 2.5
+
 
 st.set_page_config(
     page_title="ATLAS | NYC Urban Mobility Intelligence", page_icon="◆",
@@ -98,7 +100,7 @@ date_min = all_data["date"].min().date()
 date_max = all_data["date"].max().date()
 st.session_state.setdefault("date_selection", (date_min, date_max))
 st.session_state.setdefault("day_selection", "All")
-st.session_state.setdefault("selected_hour", 18)
+st.session_state.setdefault("selected_hour", 0)
 st.session_state.setdefault("hour_widget", st.session_state.selected_hour)
 st.session_state.setdefault("playing", True)  # Start the command center in motion.
 st.session_state.setdefault("last_tick", monotonic())
@@ -160,9 +162,12 @@ def render_command_center() -> None:
         )
         chart_highlight_slot = st.empty()
 
-    @st.fragment(run_every=0.8 if st.session_state.playing else None)
+    # A 3D map redraw is costly on Community Cloud. Let the browser finish each
+    # frame before asking Streamlit to send another one.
+    @st.fragment(run_every=PLAYBACK_INTERVAL_SECONDS if st.session_state.playing else None)
     def playback() -> None:
-        if st.session_state.playing and monotonic() - st.session_state.last_tick >= 0.72:
+        if (st.session_state.playing
+                and monotonic() - st.session_state.last_tick >= PLAYBACK_INTERVAL_SECONDS * .8):
             st.session_state.selected_hour = (st.session_state.selected_hour + 1) % 24
             st.session_state.hour_widget = st.session_state.selected_hour
             st.session_state.last_tick = monotonic()
@@ -227,7 +232,8 @@ def render_command_center() -> None:
                 )
                 with play_col:
                     if st.button("❚❚ PAUSE" if st.session_state.playing else "▶ PLAY",
-                                 key="play-toggle", width="stretch", type="primary"):
+                                 key="play-toggle", width="stretch", type="primary",
+                                 help="Playback runs from 00:00 to 23:00, then loops to 00:00."):
                         st.session_state.playing = not st.session_state.playing
                         st.session_state.last_tick = monotonic()
                         st.rerun()
