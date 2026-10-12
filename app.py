@@ -120,6 +120,9 @@ def render_command_center() -> None:
             overview_slot = st.empty()
             chart_slot = st.empty()
             zone_slot = st.empty()
+            # Reserve these external slots before the fragment's timed reruns.
+            overview_slot.empty()
+            zone_slot.empty()
             st.markdown('<div class="panel-heading filter-heading">FILTERS</div>',
                         unsafe_allow_html=True)
             st.session_state.map_date_range = st.session_state.date_selection
@@ -161,6 +164,7 @@ def render_command_center() -> None:
             unsafe_allow_html=True,
         )
         chart_highlight_slot = st.empty()
+        chart_highlight_slot.empty()
 
     # A 3D map redraw is costly on Community Cloud. Let the browser finish each
     # frame before asking Streamlit to send another one.
