@@ -1,0 +1,13 @@
+[project]
+name = "atlas-nyc-urban-mobility"
+version = "0.1.0"
+description = "Historical NYC taxi pickup demand dashboard for fleet planning"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "streamlit>=1.63,<2",
+    "pandas>=3.0,<4",
+    "numpy>=2.5,<3",
+    "plotly>=7,<8",
+    "pydeck>=0.9,<1",
+]

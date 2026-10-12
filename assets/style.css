@@ -1,0 +1,22 @@
+:root { color-scheme: dark; }
+html, body, [data-testid="stAppViewContainer"], [data-testid="stHeader"] { background: #07111D; color: #EAF2F8; }
+.block-container { max-width: 1540px; padding-top: 1.15rem; padding-bottom: 1.6rem; }
+.masthead { display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #254058; padding:.25rem 0 .8rem; }
+.brand { font-size:1.55rem; font-weight:800; color:#F1F7FC; letter-spacing:.23em; }
+.brand-detail { margin:.2rem 0 0 2.25rem; color:#84A0B6; font-size:.69rem; font-weight:700; letter-spacing:.18em; }
+.masthead-right { text-align:right; color:#8DAABE; font-size:.68rem; font-weight:700; letter-spacing:.12em; line-height:1.7; }
+.masthead-right strong { color:#48C8E8; }
+.subtitle { color:#A4B8C9; font-size:.97rem; padding:.8rem 0 .65rem; }
+.section-heading { color:#E7F2F9; font-size:.84rem; font-weight:800; letter-spacing:.12em; margin:1rem 0 .2rem; }
+[data-testid="stVerticalBlockBorderWrapper"] > div { background:#101E2D; border-color:#274158; border-radius:12px; }
+[data-testid="stMetricLabel"] p { color:#9DB4C6 !important; font-size:.77rem; font-weight:700; letter-spacing:.1em; }
+[data-testid="stMetricValue"] { color:#F4FAFD; font-size:1.75rem; }
+[data-testid="stWidgetLabel"] p, label p { color:#DDEAF2 !important; }
+[data-testid="stCaptionContainer"] p { color:#91A8B9; }
+.map-context { display:flex; align-items:center; gap:2.3rem; border:1px solid #28425A; border-radius:10px 10px 0 0; padding:.65rem 1rem; background:#0F2030; margin-top:.55rem; }
+.map-context span { display:flex; flex-direction:column; gap:.15rem; }
+.map-context b { color:#8FAABC; font-size:.64rem; letter-spacing:.12em; }
+.map-context strong { color:#E9F5FA; font-size:1.05rem; }
+.map-context .map-note { margin-left:auto; color:#8FAABC; font-size:.7rem; }
+.footer { color:#7F9AAE; border-top:1px solid #21394F; margin-top:1.2rem; padding-top:.8rem; font-size:.65rem; letter-spacing:.1em; text-align:center; }
+button[kind="primary"] { background:#187A9B !important; border-color:#4FC3E7 !important; color:#FFFFFF !important; }

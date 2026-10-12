@@ -1,0 +1,92 @@
+{
+  "source": "train.csv",
+  "source_bytes": 200589097,
+  "raw_rows": 1458644,
+  "raw_columns": 11,
+  "columns": {
+    "id": "str",
+    "vendor_id": "int64",
+    "pickup_datetime": "str",
+    "dropoff_datetime": "str",
+    "passenger_count": "int64",
+    "pickup_longitude": "float64",
+    "pickup_latitude": "float64",
+    "dropoff_longitude": "float64",
+    "dropoff_latitude": "float64",
+    "store_and_fwd_flag": "str",
+    "trip_duration": "int64"
+  },
+  "missing_values": {
+    "id": 0,
+    "vendor_id": 0,
+    "pickup_datetime": 0,
+    "dropoff_datetime": 0,
+    "passenger_count": 0,
+    "pickup_longitude": 0,
+    "pickup_latitude": 0,
+    "dropoff_longitude": 0,
+    "dropoff_latitude": 0,
+    "store_and_fwd_flag": 0,
+    "trip_duration": 0
+  },
+  "pickup_datetime_min": "2016-01-01 00:00:17",
+  "pickup_datetime_max": "2016-06-30 23:59:39",
+  "nyc_bounds": {
+    "min_lat": 40.45,
+    "max_lat": 40.95,
+    "min_lon": -74.3,
+    "max_lon": -73.65
+  },
+  "invalid_pickup_coordinates": 0,
+  "outside_nyc_bounds": 247,
+  "invalid_pickup_datetime": 0,
+  "zero_or_negative_trip_duration": 0,
+  "trip_duration_over_24_hours": 4,
+  "retained_pickups": 1458397,
+  "excluded_pickups": 247,
+  "latitude_quantiles": {
+    "0.01": 40.64482879638672,
+    "0.5": 40.75410079956055,
+    "0.99": 40.80650329589844
+  },
+  "longitude_quantiles": {
+    "0.01": -74.01429748535156,
+    "0.5": -73.98174285888672,
+    "0.99": -73.7822494506836
+  },
+  "hourly_pickups": [
+    53233,
+    38564,
+    27962,
+    20886,
+    15780,
+    14997,
+    33245,
+    55596,
+    67048,
+    67654,
+    65424,
+    68465,
+    71865,
+    71467,
+    74284,
+    71801,
+    64303,
+    76472,
+    90585,
+    90298,
+    84056,
+    84170,
+    80471,
+    69771
+  ],
+  "day_type_pickups": {
+    "Weekday": 1042227,
+    "Weekend": 416170
+  },
+  "grid_size_degrees": 0.01,
+  "aggregate_rows": 239648,
+  "aggregate_bytes": 9310779,
+  "aggregate_date_min": "2016-01-01",
+  "aggregate_date_max": "2016-06-30"
+}
