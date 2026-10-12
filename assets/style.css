@@ -3,7 +3,7 @@ html, body { background: #07111C; color: #EAF3FA; }
 .stApp {
   background-color: #07111C;
   background-image: linear-gradient(90deg, rgba(7,17,28,.70), rgba(7,17,28,.54)),
-    url('/app/static/nyc-night.png');
+    url('app/static/nyc-night.png');
   background-size: cover;
   background-position: center center;
   background-attachment: fixed;
