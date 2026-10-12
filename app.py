@@ -171,7 +171,7 @@ def render_command_center() -> None:
     @st.fragment(run_every=PLAYBACK_INTERVAL_SECONDS if st.session_state.playing else None)
     def playback() -> None:
         if (st.session_state.playing
-                and monotonic() - st.session_state.last_tick >= PLAYBACK_INTERVAL_SECONDS * .8):
+                and monotonic() - st.session_state.last_tick >= PLAYBACK_INTERVAL_SECONDS):
             st.session_state.selected_hour = (st.session_state.selected_hour + 1) % 24
             st.session_state.hour_widget = st.session_state.selected_hour
             st.session_state.last_tick = monotonic()
