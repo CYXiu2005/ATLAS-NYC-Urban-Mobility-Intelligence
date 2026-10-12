@@ -35,3 +35,17 @@ def fixed_scale_max(data: pd.DataFrame) -> int:
         return 1
     per_hour_zone = data.groupby(["hour", "grid_lat", "grid_lon"], observed=True)["trip_count"].sum()
     return max(1, int(per_hour_zone.max()))
+
+
+def daily_pickups(data: pd.DataFrame) -> pd.Series:
+    """Recorded pickups per observed date in the current filter selection."""
+    return data.groupby("date", observed=True)["trip_count"].sum().sort_index()
+
+
+def weekday_daily_profile(daily: pd.Series) -> pd.DataFrame:
+    """Normalize weekday demand by the number of observed dates of each weekday."""
+    frame = daily.rename("pickups").to_frame()
+    frame["weekday"] = frame.index.dayofweek
+    return frame.groupby("weekday")["pickups"].agg(
+        mean_pickups="mean", total_pickups="sum", observed_days="size",
+    ).reindex(range(7))

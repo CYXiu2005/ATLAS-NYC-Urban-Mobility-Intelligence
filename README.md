@@ -1,6 +1,6 @@
-# ATLAS — NYC Urban Mobility Intelligence
+# ATLAS 2.0 — Urban Mobility Command Center
 
-**Historical pickup demand intelligence for regional fleet planning.** ATLAS is a one-page Streamlit MVP for a regional taxi operations manager. It shows recorded pickups by time and location to guide where additional vehicle capacity deserves investigation. It does not measure unserved demand or real-time supply.
+**Historical pickup demand intelligence for regional fleet planning.** ATLAS is a two-page Streamlit dashboard for a regional taxi operations manager. The Command Center shows recorded pickups by time and location; Demand Analysis examines daily and weekday patterns. It does not measure unserved demand or real-time supply.
 
 ## STEP 1 — Dataset & Decision Maker
 
@@ -20,16 +20,28 @@ Recorded trips are **not complete market demand**. The source has no online-driv
 
 ## STEP 3 — Dashboard Design
 
-The page reads **three decision KPIs → spatial demand map → hourly demand profile**.
+The page puts the **spatial demand map first**, with a compact decision panel on its left and a map-specific timeline beneath it.
 
-- **Total Pickups** establishes the size of the selected historical sample. **Peak Demand Hour** identifies its busiest hour. **Top Pickup Zone** gives the center of the busiest 0.01° cell without inventing neighborhood names. All three use the same filtered aggregate and have no fabricated growth deltas.
-- **Spatiotemporal Demand Map** is dominant because the decision is geographic. PyDeck columns encode grid counts in color and height. The color scale is fixed across all 24 hours for the current date/day-type filter, so playback does not rescale each frame. The selected hour, active zones, and selected-hour trips appear above it.
-- **Hourly Pickup Demand** is the only supporting chart. It distinguishes an isolated spike from a longer high-volume period; its marker follows the map.
-- **Filters** are limited to Date Range and Day Type (All, Weekday, Weekend). They affect every KPI, map, and chart. The hour slider and Play/Pause inspect the map rather than change the business cohort.
+- **Pickups This Hour** follows the map's selected hour, while its caption gives the full selected-period total. **Selected Hour** identifies the active playback window and its caption names the period's peak hour. **Top Grid This Hour** gives the center and pickup count of the busiest 0.01° cell in that hour without inventing neighborhood names. All three follow the map and have no fabricated growth deltas.
+- **Spatiotemporal Demand Map** is dominant because the decision is geographic. PyDeck columns encode grid counts in color and square-root-scaled height. The color baseline is the maximum hourly grid count across all 24 hours for the current date/day-type filter, so playback does not rescale each frame. Tooltip counts remain untransformed. The selected hour, active zones, and selected-hour pickups appear above it.
+- **Hourly Pickup Demand** is the only supporting chart. Its compact bars sit beside the map, distinguish an isolated spike from a longer high-volume period, and highlight both the selected and peak hours. The selected-hour highlight advances with the map.
+- **Filters** are limited to a draggable Date Range slider and Day Type (All, Weekday, Weekend). The selected cohort carries between the two pages. The hour slider and Play/Pause inspect the map rather than change the business cohort. The Command Center starts playing on first entry and keeps playing while filters or the hour slider change; the playback button pauses or resumes it.
 
 We deliberately **do not show Passenger Count Distribution** because it does not directly guide regional vehicle placement here. We also **do not show Trip Duration Distribution**: useful for another question, but less relevant than pickup hotspots to this decision.
 
 **Limits:** The competition file is a sample; pickups omit unserved requests. There are no supply-side measures. A 0.01° grid is approximate, not an administrative neighborhood. The broad NYC box can include nearby areas and exclude distant airport pickups. This static 2016 snapshot cannot support live dispatch decisions.
+
+### ATLAS 2.0 Dashboard Design
+
+The map takes roughly seventy percent of the Command Center's desktop width because the operations question starts with **where** pickups concentrate. The narrower left panel starts with a prominent Demand Analysis page card, then contains three metrics, the 24-hour profile, and filters; its bottom edge aligns with the map panel. The timeline sits below the map and changes the hour shown in the map and left-side readouts; the date and day-type cohort remains fixed until a filter changes. Longer-range charts belong on the separate Demand Analysis page, where the title sits beside the Command Center return link. Both pages use the supplied Statue of Liberty night image behind a dark overlay; the Command Center's left panel is translucent so more of the image remains visible. The image is served from `static/nyc-night.png` so the browser can cache it.
+
+All 24 map frames share one color and height denominator for the selected date range and day type. Square-root visual scaling makes less busy grids visible while hover displays their true recorded counts. The legend runs from low blue through cyan and amber to high orange; a saturated column means the selected grid is near the current filter's upper bound. **Do not compare colors across different filter selections** without considering that their fixed bounds are recalculated. The left-side hourly readouts, highlighted chart bar, map, and selected-hour strip all use the hour on the timeline.
+
+Playback starts automatically using a timed Streamlit fragment. Each tick replaces the left metrics and right map together, while the 24 histogram bars, filters, page link, and masthead remain mounted. A small style update moves the selected-hour highlight across the fixed bars, avoiding Plotly chart remounts during playback. Cached filtered aggregates avoid recomputing the cohort each frame. The app reads the CSV once per file change and sends only one hour of grids to PyDeck per frame. The first button press pauses it. It does not show live vehicle positions, available drivers, unmet requests, or real-time demand. PyDeck's Streamlit chart API does not expose the user's live pan/zoom camera to Python, so a chart redraw during playback may restore its configured NYC view. The fixed chart key minimizes unnecessary remounts, but exact camera preservation is not guaranteed.
+
+### Demand Analysis page
+
+The link at the top of the Command Center's left panel opens a second page for longer-range planning. Its compact header places the title and planning summary beside the Command Center return link, directly above the date slider. Its **daily pickup line** shows recorded trips by observed date with the selected-period median as a reference, helping managers identify dates that merit a staffing or event-calendar review. Its **weekday bar chart** shows *average pickups per observed day of that weekday*, rather than raw weekday totals, so a weekday appearing more often in the date selection does not look artificially busier. Hover shows the mean, the number of observed dates, and their total pickups. Three compact metrics summarize average volume per observed day, the highest-volume date, and the weekday with the highest mean. Both charts use the same date/day-type cohort as the Command Center and the same pre-aggregated CSV. A missing date is not silently treated as zero demand.
 
 ### EDA and cleaning evidence
 
@@ -81,6 +93,8 @@ taxi-trip/
 │       └── data_profile.json
 ├── notebooks/eda.ipynb
 ├── assets/style.css
+├── static/nyc-night.png
+├── 自由女神与夜景.png
 ├── .streamlit/config.toml
 ├── pyproject.toml
 ├── uv.lock
