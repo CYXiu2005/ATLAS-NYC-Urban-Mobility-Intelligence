@@ -2,7 +2,7 @@
 
 **Historical pickup demand intelligence for regional fleet planning.** ATLAS is the project name shown in the app title. The two-page Streamlit dashboard serves a regional taxi operations manager: the Command Center shows recorded pickups by time and location, while Demand Analysis examines daily and weekday patterns. It does not measure unserved demand or real-time supply.
 
-**Course context and authorship:** I worked in a four-person group for the in-class discussion. After class, I independently chose this different Kaggle taxi dataset and built the ATLAS app and repository for my individual Assignment 4 submission. The app and this README describe my own work, not the dashboard discussed by the group.
+**Course context and authorship:** I worked in a four-person group for the in-class discussion; our group did not have a formal name. After class, I independently chose this different Kaggle taxi dataset and built the ATLAS app and repository for my individual Assignment 4 submission. ATLAS is the name displayed in my app title. The app and this README describe my own work, not the dashboard discussed by the group.
 
 ## STEP 1 — Dataset & Decision Maker
 
