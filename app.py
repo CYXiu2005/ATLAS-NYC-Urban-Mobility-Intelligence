@@ -84,7 +84,7 @@ st.markdown(
         <div class="brand-detail">NYC URBAN MOBILITY INTELLIGENCE</div></div>
         <div class="masthead-right"><span>NEW YORK CITY</span><strong>HISTORICAL DATA</strong></div>
     </header>
-    <p class="subtitle">Historical pickup demand intelligence for regional fleet planning.</p>''',
+    <p class="subtitle">For regional taxi operations managers: identify pickup hotspots and plan where and when to adjust vehicle coverage.</p>''',
     unsafe_allow_html=True,
 )
 
@@ -119,10 +119,8 @@ def render_command_center() -> None:
                         unsafe_allow_html=True)
             overview_slot = st.empty()
             chart_slot = st.empty()
-            zone_slot = st.empty()
             # Reserve these external slots before the fragment's timed reruns.
             overview_slot.empty()
-            zone_slot.empty()
             st.markdown('<div class="panel-heading filter-heading">FILTERS</div>',
                         unsafe_allow_html=True)
             st.session_state.map_date_range = st.session_state.date_selection
@@ -179,14 +177,28 @@ def render_command_center() -> None:
         zones = by_hour.loc[by_hour["hour"].eq(selected_hour)].copy()
         hour_total = int(profile.loc[selected_hour])
 
-        # Replace only the live content; the left panel's navigation and filters stay mounted.
+        # Keep the three headline metrics together and synchronized with the map.
         with overview_slot.container():
-            st.markdown('<div class="panel-heading">FLEET OVERVIEW</div>',
-                        unsafe_allow_html=True)
-            st.metric("01  PICKUPS THIS HOUR", f"{hour_total:,}")
-            st.caption(f"{hour_label(selected_hour)} · {metrics['total']:,} in selected period")
-            st.metric("02  SELECTED HOUR", hour_label(selected_hour))
-            st.caption(f"Period peak: {hour_label(metrics['peak_hour'])}")
+            st.markdown(f'<div class="panel-heading">FLEET OVERVIEW · '
+                        f'{hour_label(selected_hour)}</div>', unsafe_allow_html=True)
+            with st.container(key="overview_metrics"):
+                pickups_col, zones_col, hotspot_col = st.columns(3, gap="small")
+                with pickups_col:
+                    st.metric("PICKUPS", f"{hour_total:,}")
+                    st.caption("Selected hour")
+                with zones_col:
+                    st.metric("ACTIVE GRIDS", f"{len(zones):,}")
+                    st.caption("With pickups")
+                with hotspot_col:
+                    if zones.empty:
+                        st.metric("TOP GRID", "—")
+                        st.caption("No pickups")
+                    else:
+                        top_zone = zones.loc[zones["trip_count"].idxmax()]
+                        st.metric("TOP GRID", f"{int(top_zone['trip_count']):,}")
+                        st.caption(f"{top_zone['grid_lat']:.3f}, {top_zone['grid_lon']:.3f}")
+            st.caption(f"{metrics['total']:,} pickups in selected period · "
+                       f"peak hour {hour_label(metrics['peak_hour'])}")
 
         # Update one style rule; the 24 chart bars never remount during playback.
         with chart_highlight_slot:
@@ -195,16 +207,6 @@ def render_command_center() -> None:
                 '{background:#39C9F0}</style>',
                 unsafe_allow_html=True,
             )
-
-        with zone_slot.container():
-            if zones.empty:
-                st.metric("03  TOP GRID THIS HOUR", "—")
-                st.caption("No recorded pickups in this hour")
-            else:
-                top_zone = zones.loc[zones["trip_count"].idxmax()]
-                st.metric("03  TOP GRID THIS HOUR",
-                          f"{top_zone['grid_lat']:.3f}, {top_zone['grid_lon']:.3f}")
-                st.caption(f"{int(top_zone['trip_count']):,} pickups in the busiest 0.01° grid")
 
         with st.container(key="map_panel"):
             st.markdown('<div class="map-title-row"><div class="panel-heading">'
@@ -221,7 +223,6 @@ def render_command_center() -> None:
             st.pydeck_chart(
                 demand_map(zones, scale_max, selected_hour),
                 height=620, width="stretch", key="demand-map",
-                alt="3D columns show recorded New York City taxi pickups by grid for the selected hour.",
             )
             st.markdown(
                 '<div class="map-legend"><b>PICKUP INTENSITY</b><span>LOW</span>'

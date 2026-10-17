@@ -1,6 +1,6 @@
 # ATLAS 2.0 — Urban Mobility Command Center
 
-**Historical pickup demand intelligence for regional fleet planning.** ATLAS is a two-page Streamlit dashboard for a regional taxi operations manager. The Command Center shows recorded pickups by time and location; Demand Analysis examines daily and weekday patterns. It does not measure unserved demand or real-time supply.
+**Historical pickup demand intelligence for regional fleet planning.** ATLAS is the team and dashboard name shown in the app title. The two-page Streamlit dashboard serves a regional taxi operations manager: the Command Center shows recorded pickups by time and location, while Demand Analysis examines daily and weekday patterns. It does not measure unserved demand or real-time supply.
 
 ## STEP 1 — Dataset & Decision Maker
 
@@ -11,18 +11,26 @@
 
 ## STEP 2 — Business Justification
 
-1. **Who uses it and how often?** The manager reviews historical patterns when planning shifts. In a future live system, they would check before and during peaks. This Kaggle snapshot never refreshes itself.
+1. **Who uses it and how often?** A regional operations manager reviews the historical view at the weekly staffing meeting and before each planned peak shift. In a future live system, they would also check each 15-minute refresh during a peak. This Kaggle snapshot never refreshes itself.
 2. **What decision does it support?** Which hour and grid cells warrant a closer look for extra capacity. **If the regional operations manager sees** a sustained pickup concentration in adjacent grids during an upcoming shift, **they will** compare it with available vehicles and consider repositioning or changing the next schedule. This is a prompt for an operational check, not an automatic dispatch order.
-3. **What would the manager do without it?** Inspect large extracts or a static summary, making cross-hour spatial comparison slower.
-4. **Why a dashboard instead of a static report?** Date and weekday/weekend filters, hour timeline, and map update together to show when a hotspot appears and whether it persists.
+3. **What would the manager do without it?** Manually compare large trip extracts or separate hourly summaries before changing a schedule. That repeated work delays recognizing a sustained hotspot and risks leaving vehicles idle in quiet grids while coverage is thin in busy grids. The source has no driver-supply or wait-time data, so we cannot put a defensible dollar amount on that cost.
+4. **Why a dashboard instead of a weekly email, report, or single alert?** The manager repeatedly needs to change the date, day type, and hour, then compare nearby grids and the length of a peak. A fixed email or report cannot answer those follow-up questions without a new extract. An alert can flag an exceptional interval but cannot show the surrounding map and hourly pattern needed to decide whether a staffing or positioning check is warranted.
 
 Recorded trips are **not complete market demand**. The source has no online-driver inventory, unmet requests, wait times, or real-time congestion measures.
 
 ## STEP 3 — Dashboard Design
 
-The page puts the **spatial demand map first**, with a compact decision panel on its left and a map-specific timeline beneath it.
+The Command Center puts **three headline metrics in one `st.columns` row** at the top of the decision panel, so the selected hour can be assessed quickly. The spatial map sits beside the panel and takes most of the width because the next question is **where** pickups concentrate. The hourly chart explains whether the selected hour is an isolated spike or part of a sustained peak; the map-specific timeline sits beneath the map. Longer-range charts are on a separate page so they do not crowd the primary decision view.
 
-- **Pickups This Hour** follows the map's selected hour, while its caption gives the full selected-period total. **Selected Hour** identifies the active playback window and its caption names the period's peak hour. **Top Grid This Hour** gives the center and pickup count of the busiest 0.01° cell in that hour without inventing neighborhood names. All three follow the map and have no fabricated growth deltas.
+```text
+Header: ATLAS team name + manager/decision caption
+Decision panel: three metrics → hourly context → date/day-type filters  |  Map: pickup locations → hour timeline
+Footer: source period + proposed production refresh
+```
+
+This order answers **how much is happening now**, then **where and for how long**, before asking the manager to change the cohort or inspect deeper analysis.
+
+- **Pickups**, **Active Grids**, and **Top Grid** are the three side-by-side `st.metric` values. They show the selected-hour pickup count, the number of 0.01° cells with recorded pickups, and the busiest cell's pickup count. The top-grid caption gives its coordinates without inventing a neighborhood name; the heading shows the selected hour, while a small caption gives the selected-period total and peak hour. All values follow the map's hour and have no fabricated growth deltas. These are recorded pickup grids, not available-vehicle counts.
 - **Spatiotemporal Demand Map** is dominant because the decision is geographic. PyDeck columns encode grid counts in color and square-root-scaled height. The color baseline is the maximum hourly grid count across all 24 hours for the current date/day-type filter, so playback does not rescale each frame. Tooltip counts remain untransformed. The selected hour, active zones, and selected-hour pickups appear above it.
 - **Hourly Pickup Demand** is the only supporting chart. Its compact bars sit beside the map, distinguish an isolated spike from a longer high-volume period, and highlight both the selected and peak hours. The selected-hour highlight advances with the map.
 - **Filters** are limited to a draggable Date Range slider and Day Type (All, Weekday, Weekend). The selected cohort carries between the two pages. The hour slider and Play/Pause inspect the map rather than change the business cohort. The Command Center starts playing on first entry and keeps playing while filters or the hour slider change; the playback button pauses or resumes it.
@@ -33,7 +41,7 @@ We deliberately **do not show Passenger Count Distribution** because it does not
 
 ### ATLAS 2.0 Dashboard Design
 
-The map takes roughly seventy percent of the Command Center's desktop width because the operations question starts with **where** pickups concentrate. The narrower left panel starts with a prominent Demand Analysis page card, then contains three metrics, the 24-hour profile, and filters; its bottom edge aligns with the map panel. The timeline sits below the map and changes the hour shown in the map and left-side readouts; the date and day-type cohort remains fixed until a filter changes. Longer-range charts belong on the separate Demand Analysis page, where the title sits beside the Command Center return link. Both pages use the supplied Statue of Liberty night image behind a dark overlay; the Command Center's left panel is translucent so more of the image remains visible. The image is served from `static/nyc-night.png` using a relative URL so it works locally and under Streamlit Community Cloud's app path.
+The map takes roughly seventy percent of the Command Center's desktop width because the operations question starts with **where** pickups concentrate. The narrower left panel starts with a prominent Demand Analysis page card, then contains the compact three-column metric row, the 24-hour profile, and filters. The timeline sits below the map and changes the hour shown in the map and left-side metrics; the date and day-type cohort remains fixed until a filter changes. Longer-range charts belong on the separate Demand Analysis page, where the title sits beside the Command Center return link. Both pages use the supplied Statue of Liberty night image behind a dark overlay; the Command Center's left panel is translucent so more of the image remains visible. The image is served from `static/nyc-night.png` using a relative URL so it works locally and under Streamlit Community Cloud's app path.
 
 All 24 map frames share one color and height denominator for the selected date range and day type. Square-root visual scaling makes less busy grids visible while hover displays their true recorded counts. The legend runs from low blue through cyan and amber to high orange; a saturated column means the selected grid is near the current filter's upper bound. **Do not compare colors across different filter selections** without considering that their fixed bounds are recalculated. The left-side hourly readouts, highlighted chart bar, map, and selected-hour strip all use the hour on the timeline.
 
@@ -45,7 +53,7 @@ The link at the top of the Command Center's left panel opens a second page for l
 
 ### EDA and cleaning evidence
 
-The full scan found **no missing values** in the 11 columns and **no invalid pickup datetimes or world coordinates**. The NYC box (latitude **40.45–40.95**, longitude **−74.30 to −73.65**) excludes **247** pickups and retains **1,458,397**. There are **zero** nonpositive trip durations and **four** longer than 24 hours. Duration extremes are reported but kept because duration is not used in the pickup count. Among retained pickups, **1,042,227** are on weekdays and **416,170** on weekends; these totals cover unequal numbers of days and are not average daily rates. The busiest observed hour is **18:00–19:00**, with **90,585** pickups across the study period. Methods and exploratory charts are in [`notebooks/eda.ipynb`](notebooks/eda.ipynb).
+The full scan found **no missing values** in the 11 columns and **no invalid pickup datetimes or world coordinates**. The NYC box (latitude **40.45–40.95**, longitude **−74.30 to −73.65**) excludes **247** pickups and retains **1,458,397**. There are **zero** nonpositive trip durations and **four** longer than 24 hours. Duration extremes are reported but kept because duration is not used in the pickup count. Among retained pickups, **1,042,227** are on weekdays and **416,170** on weekends; these totals cover unequal numbers of days and are not average daily rates. The busiest observed hour is **18:00–19:00**, with **90,585** pickups across the study period. The executed [EDA notebook](notebooks/eda.ipynb) shows source shape, field types and missingness from the saved full-source profile, plus Pandas and Matplotlib distributions and spatial/time relationships from the processed aggregate. The original raw CSV is no longer needed to view or rerun those aggregate plots.
 
 To rebuild the aggregate, first download `train.csv` from Kaggle and place it in `data/`, then run:
 
@@ -58,15 +66,15 @@ The pipeline reads in chunks, parses pickup time, validates coordinates, keeps p
 ## STEP 4 — Refresh Strategy
 
 - **Production data refresh frequency:** **Every 15 minutes is proposed for a future system** connected to a continuing order stream. It is not this Kaggle snapshot's refresh frequency.
-- **Dashboard review frequency:** Before anticipated peaks and at each production refresh during a peak; use historical filters for shift planning.
-- **Action threshold:** A candidate pilot rule is two consecutive 15-minute windows materially above a comparable historical day-type/time baseline. The exact threshold needs calibration with operations and supply data. This hourly historical sample cannot evaluate that rule. Exceeding it would prompt a check of available vehicles before reallocation.
+- **Dashboard review frequency:** At the weekly staffing meeting and before each planned peak shift; in a future live system, at each 15-minute refresh during a peak. This is distinct from the data refresh schedule.
+- **Metric and action threshold:** Track recorded pickups in each operating corridor against the historical baseline for the same day type and time of day. A **pilot rule** is at least **20% and 20 pickups above that baseline for two consecutive 15-minute windows**. If triggered, check available vehicles before deciding whether to reposition; do not dispatch from pickup counts alone. The thresholds are proposals to calibrate with live 15-minute demand and supply data, not findings validated by this hourly 2016 snapshot.
 - **Cost of stale data:** Delayed hotspot recognition can lead to late repositioning or unnecessary idle coverage. This dataset cannot quantify that cost.
 
-Fifteen minutes is a practical proposed review cadence, rather than reacting to every trip. A real system would also need live ingestion, driver availability, reliability checks, and operational validation.
+Fifteen minutes is a practical proposed refresh cadence, rather than reacting to every trip. The manager checks at that cadence only during peaks. A real system would also need live ingestion, driver availability, reliability checks, and operational validation.
 
 ## STEP 5 — Run & Deploy
 
-Use **Python 3.14**. The project has a standalone `pyproject.toml`, `uv.lock`, and matching runtime `requirements.txt`. From `taxi-trip`:
+Use **Python 3.14**. The project has a standalone `pyproject.toml`, `uv.lock`, and matching runtime `requirements.txt`. From the repository root (the local source folder is `taxi-trip`):
 
 ```bash
 uv sync
@@ -75,12 +83,12 @@ uv run streamlit run app.py
 
 The processed CSV and profile are included for runtime; `.gitignore` excludes the large raw Kaggle files, which are absent from this local project. To reproduce processing, download `train.csv` into `data/`, then run the rebuild command. The source is subject to [Kaggle competition rules](https://www.kaggle.com/competitions/nyc-taxi-trip-duration/rules); review them before redistributing data or making a public deployment.
 
-For [Streamlit Community Cloud](https://docs.streamlit.io/deploy/streamlit-community-cloud/deploy-your-app/deploy), push the project and choose `app.py` if `taxi-trip` is the repository root, or `taxi-trip/app.py` if it is a subdirectory. Select Python 3.14 in Advanced settings. Community Cloud finds dependencies beside the entrypoint; both `uv.lock` and `requirements.txt` are present. In a multi-app repository, shared `.streamlit/config.toml` belongs at repository root; ATLAS CSS loads from `taxi-trip/assets/style.css` regardless. The [CARTO Dark Matter basemap](https://docs.carto.com/carto-for-developers/carto-for-react/guides/basemaps) requires browser internet access, but no private token.
+For [Streamlit Community Cloud](https://docs.streamlit.io/deploy/streamlit-community-cloud/deploy-your-app/deploy), use `app.py` as the entrypoint and select Python 3.14 in Advanced settings. The deployed repository already places `app.py`, `.streamlit/config.toml`, `assets/style.css`, `uv.lock`, and `requirements.txt` at its root. The [CARTO Dark Matter basemap](https://docs.carto.com/carto-for-developers/carto-for-react/guides/basemaps) requires browser internet access, but no private token.
 
 ### Project structure
 
 ```text
-taxi-trip/
+ATLAS-NYC-Urban-Mobility-Intelligence/
 ├── app.py
 ├── src/
 │   ├── data_loader.py

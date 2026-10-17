@@ -37,19 +37,20 @@ html, body { background: #07111C; color: #EAF3FA; }
 .panel-heading { color: #EAF3FA; font-size: .72rem; font-weight: 800; letter-spacing: .11em; line-height: 1.4; }
 .chart-heading, .filter-heading { border-top: 1px solid #24394B; padding-top: .7rem; }
 .filter-heading { margin-top: .12rem; }
-.st-key-intelligence_panel [data-testid="stMetric"] { padding: .1rem 0; }
-.st-key-intelligence_panel [data-testid="stMetricLabel"] p {
-  color: #91A9BA !important; font-size: .64rem; font-weight: 750; letter-spacing: .1em;
+.st-key-overview_metrics { margin: .35rem 0 .12rem; }
+.st-key-overview_metrics [data-testid="stMetric"] { padding: .1rem 0; }
+.st-key-overview_metrics [data-testid="stMetricLabel"] p {
+  color: #A9C4D5 !important; font-size: .56rem; font-weight: 750; letter-spacing: .05em;
 }
-.st-key-intelligence_panel [data-testid="stMetricValue"] {
-  color: #EAF3FA; font-size: clamp(1.3rem, 1.7vw, 1.75rem); line-height: 1.14;
+.st-key-overview_metrics [data-testid="stMetricValue"] {
+  color: #EAF3FA; font-size: clamp(1.05rem, 1.35vw, 1.45rem); line-height: 1.14;
   font-variant-numeric: tabular-nums;
 }
 .st-key-intelligence_panel [data-testid="stCaptionContainer"] p {
   color: #91A9BA; font-size: .66rem; line-height: 1.35;
 }
 .hourly-chart { display: grid; grid-template-columns: 1.8rem minmax(0,1fr);
-  grid-template-rows: 10.1rem 1.4rem; column-gap: .25rem; width: 100%; }
+  grid-template-rows: 15rem 1.4rem; column-gap: .25rem; width: 100%; }
 .hourly-y-axis { display: flex; flex-direction: column; justify-content: space-between;
   align-items: flex-end; padding: 4.75rem 0 .15rem; color: #D7E7F2; font-size: .68rem; }
 .hourly-bars { display: flex; align-items: end; gap: 2px; min-width: 0;
