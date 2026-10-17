@@ -11,3 +11,9 @@ dependencies = [
     "plotly>=7,<8",
     "pydeck>=0.9,<1",
 ]
+
+[project.optional-dependencies]
+eda = [
+    "matplotlib>=3.10,<4",
+    "ipykernel>=7,<8",
+]

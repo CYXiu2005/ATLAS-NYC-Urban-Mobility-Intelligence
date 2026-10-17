@@ -81,6 +81,8 @@ uv sync
 uv run streamlit run app.py
 ```
 
+To rerun the EDA notebook in VS Code, run `uv sync --extra eda` and select this project's `.venv` as the notebook kernel. The optional `eda` extra supplies Matplotlib and `ipykernel`; the hosted dashboard does not need them.
+
 The processed CSV and profile are included for runtime; `.gitignore` excludes the large raw Kaggle files, which are absent from this local project. To reproduce processing, download `train.csv` into `data/`, then run the rebuild command. The source is subject to [Kaggle competition rules](https://www.kaggle.com/competitions/nyc-taxi-trip-duration/rules); review them before redistributing data or making a public deployment.
 
 For [Streamlit Community Cloud](https://docs.streamlit.io/deploy/streamlit-community-cloud/deploy-your-app/deploy), use `app.py` as the entrypoint and select Python 3.14 in Advanced settings. The deployed repository already places `app.py`, `.streamlit/config.toml`, `assets/style.css`, `uv.lock`, and `requirements.txt` at its root. The [CARTO Dark Matter basemap](https://docs.carto.com/carto-for-developers/carto-for-react/guides/basemaps) requires browser internet access, but no private token.
@@ -106,5 +108,6 @@ ATLAS-NYC-Urban-Mobility-Intelligence/
 ├── .streamlit/config.toml
 ├── pyproject.toml
 ├── uv.lock
+├── README.md
 └── requirements.txt
 ```
