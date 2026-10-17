@@ -1,6 +1,8 @@
 # ATLAS 2.0 — Urban Mobility Command Center
 
-**Historical pickup demand intelligence for regional fleet planning.** ATLAS is the team and dashboard name shown in the app title. The two-page Streamlit dashboard serves a regional taxi operations manager: the Command Center shows recorded pickups by time and location, while Demand Analysis examines daily and weekday patterns. It does not measure unserved demand or real-time supply.
+**Historical pickup demand intelligence for regional fleet planning.** ATLAS is the project name shown in the app title. The two-page Streamlit dashboard serves a regional taxi operations manager: the Command Center shows recorded pickups by time and location, while Demand Analysis examines daily and weekday patterns. It does not measure unserved demand or real-time supply.
+
+**Course context and authorship:** I worked in a four-person group for the in-class discussion. After class, I independently chose this different Kaggle taxi dataset and built the ATLAS app and repository for my individual Assignment 4 submission. The app and this README describe my own work, not the dashboard discussed by the group.
 
 ## STEP 1 — Dataset & Decision Maker
 
@@ -23,7 +25,7 @@ Recorded trips are **not complete market demand**. The source has no online-driv
 The Command Center puts **three headline metrics in one `st.columns` row** at the top of the decision panel, so the selected hour can be assessed quickly. The spatial map sits beside the panel and takes most of the width because the next question is **where** pickups concentrate. The hourly chart explains whether the selected hour is an isolated spike or part of a sustained peak; the map-specific timeline sits beneath the map. Longer-range charts are on a separate page so they do not crowd the primary decision view.
 
 ```text
-Header: ATLAS team name + manager/decision caption
+Header: ATLAS project name + manager/decision caption
 Decision panel: three metrics → hourly context → date/day-type filters  |  Map: pickup locations → hour timeline
 Footer: source period + proposed production refresh
 ```
